@@ -1,0 +1,125 @@
+CREATE TABLE eventlog(
+	user TEXT,
+	realm TEXT,
+	sessionid TEXT COLLATE NOCASE,
+	timestamp TEXT,
+	notes TEXT,
+	dump TEXT,
+	addr TEXT
+);
+
+CREATE TABLE sessions(
+	timestamp TEXT,
+	id TEXT COLLATE NOCASE,
+	user TEXT,
+	realm TEXT,
+	password TEXT,
+	machine_managed BOOLEAN,
+	operation INTEGER,
+	type TEXT,
+	pps TEXT,
+	redirect_uri TEXT,
+	devinfo TEXT,
+	devdetail TEXT,
+	cert TEXT,
+	cert_pem TEXT,
+	mac_addr TEXT,
+	osu_user TEXT,
+	osu_password TEXT,
+	eap_method TEXT,
+	mobile_identifier_hash TEXT,
+	test TEXT
+);
+
+CREATE index sessions_id_index ON sessions(id);
+
+CREATE TABLE osu_config(
+       realm TEXT,
+       field TEXT,
+       value TEXT
+);
+
+CREATE TABLE users(
+	identity TEXT PRIMARY KEY,
+	methods TEXT,
+	password TEXT,
+	machine_managed BOOLEAN,
+	remediation TEXT,
+	phase2 INTEGER,
+	realm TEXT,
+	policy TEXT,
+	devinfo TEXT,
+	devdetail TEXT,
+	pps TEXT,
+	fetch_pps INTEGER,
+	osu_user TEXT,
+	osu_password TEXT,
+	shared INTEGER,
+	cert TEXT,
+	cert_pem TEXT,
+	t_c_timestamp INTEGER,
+	mac_addr TEXT,
+	last_msk TEXT,
+	polupd_done TEXT,
+	subrem TEXT
+);
+
+CREATE TABLE wildcards(
+	identity TEXT PRIMARY KEY,
+	methods TEXT
+);
+
+CREATE TABLE authlog(
+	timestamp TEXT,
+	session TEXT,
+	nas_ip TEXT,
+	username TEXT,
+	note TEXT
+);
+
+CREATE TABLE pending_tc(
+	mac_addr TEXT PRIMARY KEY,
+	identity TEXT
+);
+
+CREATE TABLE current_sessions(
+	mac_addr TEXT PRIMARY KEY,
+	identity TEXT,
+	start_time TEXT,
+	nas TEXT,
+	hs20_t_c_filtering BOOLEAN,
+	waiting_coa_ack BOOLEAN,
+	coa_ack_received BOOLEAN
+);
+
+CREATE TABLE cert_enroll(
+	mac_addr TEXT PRIMARY KEY,
+	user TEXT,
+	realm TEXT,
+	serialnum TEXT
+);
+
+CREATE TABLE sim_provisioning(
+	mobile_identifier_hash TEXT PRIMARY KEY,
+	imsi TEXT,
+	mac_addr TEXT,
+	eap_method TEXT,
+	timestamp TEXT
+);
+INSERT INTO osu_config(realm,field,value) VALUES('example.com','fqdn','example.com');
+INSERT INTO osu_config(realm,field,value) VALUES('example.com','friendly_name','Example Operator');
+INSERT INTO osu_config(realm,field,value) VALUES('example.com','spp_http_auth_url','https://subscription-server.osu.example.com/hs20/spp.php?realm=example.com');
+INSERT INTO osu_config(realm,field,value) VALUES('example.com','trust_root_cert_url','https://osu-server.osu.example.com/hs20/files/spp-root-ca.der');
+INSERT INTO osu_config(realm,field,value) VALUES('example.com','trust_root_cert_fingerprint','5b393a9246865569485c2605c3304e48212b449367858299beba9384c4cf4647');
+INSERT INTO osu_config(realm,field,value) VALUES('example.com','aaa_trust_root_cert_url','https://osu-server.osu.example.com/hs20/files/aaa-root-ca.der');
+INSERT INTO osu_config(realm,field,value) VALUES('example.com','aaa_trust_root_cert_fingerprint','5b393a9246865569485c2605c3304e48212b449367858299beba9384c4cf4647');
+INSERT INTO osu_config(realm,field,value) VALUES('example.com','free_account','free');
+INSERT INTO osu_config(realm,field,value) VALUES('example.com','policy_url','https://subscription-server.osu.example.com/hs20/spp.php?realm=example.com');
+INSERT INTO osu_config(realm,field,value) VALUES('example.com','remediation_url','https://subscription-server.osu.example.com/hs20/remediation.php?session_id=');
+INSERT INTO osu_config(realm,field,value) VALUES('example.com','free_remediation_url','https://subscription-server.osu.example.com/hs20/free-remediation.php?session_id=');
+INSERT INTO osu_config(realm,field,value) VALUES('example.com','signup_url','https://subscription-server.osu.example.com/hs20/signup.php?session_id=');
+
+
+INSERT INTO users(identity,realm,methods,password,phase2,shared) VALUES('free','example.com','TTLS-MSCHAPV2','free',1,1);
+
+INSERT INTO wildcards(identity,methods) VALUES('','TTLS,TLS');
